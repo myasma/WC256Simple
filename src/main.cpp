@@ -66,7 +66,7 @@ void setup()
   Serial.print("AP IP address: ");
   Serial.println(IP);
   Serial.println(WiFi.localIP());
-
+  Serial.println("martin");
   if(!SPIFFS.begin()){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
