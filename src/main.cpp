@@ -7,7 +7,7 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-
+#include "effects.h"
 #include <WiFiUdp.h>
 #include "TimeLogic.h"
 
