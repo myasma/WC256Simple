@@ -2,13 +2,12 @@
 
 
 
-
-
-
+/* unsigned long  timeNow, timeLast;
+int minutes, hours, seconds; */
 
 void setNewTime(){
     timeNow = millis() /1000; 
-    seconds = timeNow - timeLast;
+    seconds = (int) timeNow - timeLast;
     if (seconds == 60) {
         timeLast = timeNow;
         minutes = minutes + 1;

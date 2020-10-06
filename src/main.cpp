@@ -7,27 +7,27 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-#include "effects.h"
+
 #include <WiFiUdp.h>
 #include "TimeLogic.h"
-
+//#include <effects.h> 
 //accesspoint
 #include <Hash.h>
 
 using namespace std;
 
-const char* ssid     = "WORD_CLOCK";
+const char* ssid     = "WORD_CLOCK52";
 const char* password = "123456789";
 
 AsyncWebServer server(80);
                                                                                                 
-int delayInSeconds = 1;
+int delayInSeconds = 0;
 int timeNow = 0;
 int timeLast = 0;
 int seconds = 0;
-int minutes = 25;
+int minutes = 16;
 int hours   = 15;
-
+int cc = 0;
 //Input Parameter for Webserver
 const char* PARAM_INPUT_1 = "HOUR";
 const char* PARAM_INPUT_2 = "MINUTE";
@@ -61,12 +61,16 @@ void setup()
 {
   //WIFI INIT
   Serial.begin(115200);
+  delayMicroseconds(1000);
   WiFi.softAP(ssid, password);
+  Serial.println("MAC: " + WiFi.macAddress());
   IPAddress IP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(IP);
   Serial.println(WiFi.localIP());
   Serial.println("martin");
+  
+  
   if(!SPIFFS.begin()){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
@@ -130,6 +134,7 @@ if (hours == 24 - startingHour + 2) {
 }
 
 void loop() {
+
  // timeClient.update();
   //minutes = minutes + 1;
  // Serial.println("test");
@@ -180,14 +185,18 @@ void loop() {
 
   //Time2LED(timeClient.getHours(), timeClient.getMinutes());
   setCurrentColor(White);
-  setNewTime();
   
-  //timeClient.update();
+  setNewTime();
+ 
+  if (!(cc % 10)) {Serial.print("got ClockClick Update:");} cc++;
+  Serial.println(cc);//timeClient.update();
 
   //timeNow = timeNow + 5;
  
+ 
   
   Time2LED(hours, minutes);
+   
     strip.Show();
 
     seconds = seconds + delayInSeconds;

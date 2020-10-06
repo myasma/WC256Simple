@@ -234,6 +234,7 @@ void Time2LED(int Hour, int Minute){
        ES_IST();
         setHourOnLED(Hour);
         setMinuteOnLED(Minute);
+        
     }
     
 }
