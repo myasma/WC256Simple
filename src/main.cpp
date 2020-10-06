@@ -7,7 +7,6 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-
 #include <WiFiUdp.h>
 #include "TimeLogic.h"
 //#include <effects.h> 
@@ -20,7 +19,8 @@ const char* ssid     = "WORD_CLOCK52";
 const char* password = "123456789";
 
 AsyncWebServer server(80);
-                                                                                                
+int dummyVar = 0;
+
 int delayInSeconds = 0;
 int timeNow = 0;
 int timeLast = 0;
