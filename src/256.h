@@ -70,8 +70,6 @@ void loadHammer() {
             }
         }           
                     
-
-
 void ES_IST(){
     typeWriter.clear();
     typeWriter = {15,14,12,11,10};  
