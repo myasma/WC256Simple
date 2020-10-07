@@ -9,12 +9,11 @@
 #include <FS.h>
 #include <WiFiUdp.h>
 #include "TimeLogic.h"
+//#include "internalTimeClock.h"
 //#include <effects.h> 
 //accesspoint
 #include <Hash.h>
-
 using namespace std;
-
 const char* ssid     = "WORD_CLOCK52";
 const char* password = "123456789";
 
@@ -22,12 +21,14 @@ AsyncWebServer server(80);
 int dummyVar = 0;
 
 int delayInSeconds = 0;
-int timeNow = 0;
-int timeLast = 0;
+unsigned long timeNow = 0UL;
+unsigned long timeLast = 0UL;
 int seconds = 0;
 int minutes = 16;
 int hours   = 15;
+boolean newMinuteFlag = true; //"neueMinute-Update notwendig?"  zurücksetzen
 int cc = 0;
+
 //Input Parameter for Webserver
 const char* PARAM_INPUT_1 = "HOUR";
 const char* PARAM_INPUT_2 = "MINUTE";
@@ -56,9 +57,8 @@ String processor(const String& var){
  
 }
 
-
-void setup()
-{
+//----------------------------------BEGIN OF SETUP---------------------------> 
+void setup(){
   //WIFI INIT
   Serial.begin(115200);
   delayMicroseconds(1000);
@@ -94,25 +94,29 @@ void setup()
   strip.Show();
 
 }
-
-void setNewTime(){
+//-------------------------------------END OF SETUP-------------------------->
+//---------------------------------------SET NEW TIME------------------------------------->
+boolean setNewTime1(){
     
-     if (seconds == 60) {
+    timeNow = micros()/1000000UL; 
+    seconds = (int)(timeNow - timeLast);
+    
+     if (seconds >= 60) {
+      timeLast = timeNow;  //rückspeichern 
       seconds = 0;
       minutes = minutes + 1;
-  }
-
-
-  if (minutes == 60){ 
+      newMinuteFlag = true; //neueMinute-Update notwendig!
+  
+  if (minutes >= 60){ 
       minutes = 0;
       hours = hours + 1;
-  }
+  
 
 // if one hour has passed, start counting minutes from zero and add one hour to the clock
 
-  if (hours == 24){
+  if (hours >= 24){
     hours = 0;
-  }  
+  }}}
 
   //if 24 hours have passed , add one day
 /*
@@ -131,8 +135,13 @@ if (hours == 24 - startingHour + 2) {
   correctedToday = 0;
 }
 */
+Serial.print("HHMMSS: ");Serial.print(hours);
+Serial.print(":");Serial.print(minutes);
+Serial.print(":");Serial.println(seconds);
+delay(1234UL);
+return newMinuteFlag;
 }
-
+//---------------------------------START OF LOOP----------------------------->
 void loop() {
 
  // timeClient.update();
@@ -185,27 +194,23 @@ void loop() {
 
   //Time2LED(timeClient.getHours(), timeClient.getMinutes());
   setCurrentColor(White);
-  
-  setNewTime();
+  if(setNewTime1()) {
  
-  if (!(cc % 10)) {Serial.print("got ClockClick Update:");} cc++;
-  Serial.println(cc);//timeClient.update();
-
-  //timeNow = timeNow + 5;
- 
- 
+   //timeNow = timeNow + 5;
+   Serial.println("-------debug:-----TimeToLed --------------------------");
   
   Time2LED(hours, minutes);
-   
-    strip.Show();
+  newMinuteFlag = false; //"neueMinute-Update notwendig?"  zurücksetzen
+  }
+    if (!(cc % 10)) {Serial.print("got ClockClick Update:");} cc++;
+  Serial.println(cc);//timeClient.update();
+   // strip.Show();
 
     seconds = seconds + delayInSeconds;
-      delay(delayInSeconds*1000);
-
-
-
-
-
-
+      //delay(delayInSeconds*1000);
   }
+ 
+ //------------------------------------END OF LOOP---------------------------------------->
 
+
+  
