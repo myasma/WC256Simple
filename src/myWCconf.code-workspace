@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "WC256Simple",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"github.remoteName": "myasma/WC256Simple"
+	}
+}
