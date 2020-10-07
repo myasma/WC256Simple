@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <vector>
 using namespace std;
-unsigned long stepTime = 130UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
+unsigned long stepTime = 175UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
 unsigned long stepTimeT = (stepTime*1000);
-int effectsMode = 2;        //modeSwitch f. User-defined Einstellungne.()
+int effectsMode = 1;        //modeSwitch f. User-defined Einstellungne.(1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
 
 
 const int matrix[16][16] ={
@@ -31,8 +31,7 @@ const int matrix[16][16] ={
 
 vector<int> typeWriter;    // <--Container, beinhaltet das aktuell anzuzeigende Wort,
                            // laden des Containers erfolgt in den jeweiligen u.a. Funktion.
-
-void hammer() { // erzeugt ein timeDelay
+void hammer(int tMode) { // erzeugt ein timeDelay
     /*  unsigned long a_Time = millis();
      unsigned long b_Time = 0UL;
      do { b_Time = (millis() - a_Time);} while (b_Time < stepTime );
@@ -40,11 +39,23 @@ void hammer() { // erzeugt ein timeDelay
       delayMicroseconds(stepTimeT);
    }
 void hammerLetter() {
+ 
       //Serial.print("Letter: ");
-        for (int letterNumber : typeWriter)
-                {setLed(letterNumber);
+/* if (typeWriter.at(0) > typeWriter.at(1)) {
+for_each (typeWriter.rbegin(), typeWriter.rend(),setLed);
        //Serial.print(letterNumber);Serial.print(":");
-                    hammer();
+                    delayMicroseconds(stepTimeT);
+                    //hammer(effectsMode);
+                    strip.Show();
+                     typeWriter.clear();
+                     yield();     //<--gewährleistet der Schleife genug Zeit,   
+            }
+              else {                   //um auslösung des WDT-Reset zu verhindern. */
+
+        for (int letterNumber : typeWriter) {setLed(letterNumber);
+       //Serial.print(letterNumber);Serial.print(":");
+                    delayMicroseconds(stepTimeT);
+                    //hammer(effectsMode);
                     strip.Show();
                      typeWriter.clear();
                      yield();     //<--gewährleistet der Schleife genug Zeit,   
@@ -55,7 +66,8 @@ void hammerLetter() {
 
 void hammerWords() {
  for (int letterNumber : typeWriter) {setLed(letterNumber);}
-hammer();
+delayMicroseconds(stepTimeT*3);
+//hammer(effectsMode);
 strip.Show();
 typeWriter.clear();
 yield();
@@ -65,14 +77,14 @@ void loadHammer() {
         if (effectsMode == 1) {hammerLetter();}
         if (effectsMode == 0) {hammerWords();}
         if (effectsMode == 2) {
-            if(typeWriter.at(0) == 15) {
+            if(typeWriter.at(0) == 15) {  //"ES IST" mit 'hammerLetter' ausgeben, alle Anderen mit 'hammerWords)
                 hammerLetter();} else {hammerWords();}
             }
         }           
                     
 void ES_IST(){
     typeWriter.clear();
-    typeWriter = {15,14,12,11,10};  
+    typeWriter = {15,14,12,11,10};
     loadHammer();
    
     /*
@@ -633,7 +645,7 @@ void ZEHN_BOTTOM(){
 
 void ACHT_BOTTOM(){
     typeWriter.clear();
-    typeWriter = {198,199,200,201};
+    typeWriter = {182,183,184,185};
     loadHammer();
     /* 
     setLed(198);

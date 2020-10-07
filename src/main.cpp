@@ -24,7 +24,7 @@ int delayInSeconds = 0;
 unsigned long timeNow = 0UL;
 unsigned long timeLast = 0UL;
 int seconds = 0;
-int minutes = 16;
+int minutes = 22;
 int hours   = 15;
 boolean newMinuteFlag = true; //"neueMinute-Update notwendig?"  zurücksetzen
 int cc = 0;
@@ -61,65 +61,26 @@ String processor(const String& var){
 void setup(){
   //WIFI INIT
   Serial.begin(115200);
-  delayMicroseconds(1000);
-  WiFi.softAP(ssid, password);
+  delay(1000UL);
+    WiFi.softAP(ssid, password);
+  
   Serial.println("MAC: " + WiFi.macAddress());
   IPAddress IP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(IP);
   Serial.println(WiFi.localIP());
   Serial.println("martin");
-  
+  Serial.print("this is ");Serial.print(_FILENAME_);Serial.print(": ");Serial.print(__DATE__);Serial.print(": ");Serial.println(__TIME__);
+  delay(1000UL);
   
   if(!SPIFFS.begin()){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
- //---------------------------Server Stack------------------------------------------>
- server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html", String(), false, processor);
-  });
-
-  server.on("/time", HTTP_GET, [](AsyncWebServerRequest *request){
-    char str[16]; 
-
-    sprintf(str,"%02u:%02u:%02u ", hours, minutes, seconds); 
-    Serial.println(str);
-    String test = String(str);
-    request->send_P(200, "text/plain", test.c_str());
-  });
  
-    server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    String inputMessage;
-    // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
-    if (request->hasParam(PARAM_INPUT_1)) {
-      inputMessage = request->getParam(PARAM_INPUT_1)->value();
-      hours = inputMessage.toInt();
-    }
-    // GET input2 value on <ESP_IP>/get?input2=<inputMessage>
-    else if (request->hasParam(PARAM_INPUT_2)) {
-      inputMessage = request->getParam(PARAM_INPUT_2)->value();
-      minutes = inputMessage.toInt();
-    }
-    // GET input3 value on <ESP_IP>/get?input3=<inputMessage>
-    else if (request->hasParam(PARAM_INPUT_3)) {
-      inputMessage = request->getParam(PARAM_INPUT_3)->value();
-      seconds = inputMessage.toInt();
-    }
-    else {
-      inputMessage = "No message sent";
-    }
-    Serial.println(inputMessage);
-    request->send(200, "text/html", "HTTP GET request sent to your ESP on input field (" 
-                                      ") with value: " + inputMessage +
-                                     "<br><a href=\"/\">Return to Home Page</a>");
-  });
-  
-
-
-
-
-
+ 
+ //---------------------------Server Stack------------------------------------------>
+ 
  //---------------------------/ServerStack------------------------------------------>  
  
   server.begin();
@@ -180,9 +141,9 @@ if (hours == 24 - startingHour + 2) {
   correctedToday = 0;
 }
 */
-Serial.print("HHMMSS: ");Serial.print(hours);
+/* Serial.print("HHMMSS: ");Serial.print(hours);
 Serial.print(":");Serial.print(minutes);
-Serial.print(":");Serial.println(seconds);
+Serial.print(":");Serial.println(seconds); */
 delay(1234UL);
 return newMinuteFlag;
 }
@@ -195,23 +156,61 @@ void loop() {
  //    Serial.println(timeClient.getHours());
  //    Serial.println(timeClient.getMinutes());
 //--------------------------------SERVER-------------------------------<
- 
-  clearLeds();
+server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/index.html", String(), false, processor);
+  });
 
+  server.on("/time", HTTP_GET, [](AsyncWebServerRequest *request){
+    char str[16]; 
+
+    sprintf(str,"%02u:%02u:%02u ", hours, minutes, seconds); 
+    Serial.println(str);
+    String test = String(str);
+    request->send_P(200, "text/plain", test.c_str());
+  });
+ 
+    server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    String inputMessage;
+    // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
+    if (request->hasParam(PARAM_INPUT_1)) {
+      inputMessage = request->getParam(PARAM_INPUT_1)->value();
+      hours = inputMessage.toInt();
+    }
+    // GET input2 value on <ESP_IP>/get?input2=<inputMessage>
+    else if (request->hasParam(PARAM_INPUT_2)) {
+      inputMessage = request->getParam(PARAM_INPUT_2)->value();
+      minutes = inputMessage.toInt();
+    }
+    // GET input3 value on <ESP_IP>/get?input3=<inputMessage>
+    else if (request->hasParam(PARAM_INPUT_3)) {
+      inputMessage = request->getParam(PARAM_INPUT_3)->value();
+      seconds = inputMessage.toInt();
+    }
+    else {
+      inputMessage = "No message sent";
+    }
+    Serial.println(inputMessage);
+    request->send(200, "text/html", "HTTP GET request sent to your ESP on input field (" 
+                                      ") with value: " + inputMessage +
+                                     "<br><a href=\"/\">Return to Home Page</a>");
+  });
+  //---------------------------/SERVER--------------------------------------------<
+  clearLeds();
+  
   //Time2LED(timeClient.getHours(), timeClient.getMinutes());
-  setCurrentColor(White);
+  setCurrentColor(violet);
   if(setNewTime1()) {
  
    //timeNow = timeNow + 5;
-   Serial.println("-------debug:-----TimeToLed --------------------------");
+  // Serial.println("-------debug:-----TimeToLed --------------------------");
   
   Time2LED(hours, minutes);
   newMinuteFlag = false; //"neueMinute-Update notwendig?"  zurücksetzen
   }
-    if (!(cc % 10)) {Serial.print("got ClockClick Update:");} cc++;
-  Serial.println(cc);//timeClient.update();
+    //if (!(cc % 10)) {Serial.print("got ClockClick Update:");} cc++;
+  //Serial.println(cc);//timeClient.update();
    // strip.Show();
-
+//  server.reset();
     seconds = seconds + delayInSeconds;
       //delay(delayInSeconds*1000);
   }
