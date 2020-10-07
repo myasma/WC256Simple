@@ -125,7 +125,7 @@ void setMinuteHelper(int Minute){
         break;
     case 7:
         if(Minute == 17) {
-            SIEB_BOTTOM;
+            SIEB_BOTTOM();
             break;
         }else 
         SIEBEN_BOTTOM();

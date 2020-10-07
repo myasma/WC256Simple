@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <vector>
 using namespace std;
-unsigned long stepTime = 260UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
+unsigned long stepTime = 130UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
 unsigned long stepTimeT = (stepTime*1000);
 int effectsMode = 2;        //modeSwitch f. User-defined Einstellungne.()
 

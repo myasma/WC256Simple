@@ -1,11 +1,10 @@
 #include <Arduino.h>
 
-
-
-unsigned long  timeNow, timeLast;
-int minutes, hours,seconds; 
+/* unsigned long  timeNow, timeLast;
+,seconds;  */
+int minutes, hours;
 void setNewTime(){
- /* 
+  
     timeNow = millis() /1000; 
     seconds = (int) timeNow - timeLast;
     if (seconds == 60) {

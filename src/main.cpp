@@ -75,7 +75,52 @@ void setup(){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
-    
+ //---------------------------Server Stack------------------------------------------>
+ server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/index.html", String(), false, processor);
+  });
+
+  server.on("/time", HTTP_GET, [](AsyncWebServerRequest *request){
+    char str[16]; 
+
+    sprintf(str,"%02u:%02u:%02u ", hours, minutes, seconds); 
+    Serial.println(str);
+    String test = String(str);
+    request->send_P(200, "text/plain", test.c_str());
+  });
+ 
+    server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    String inputMessage;
+    // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
+    if (request->hasParam(PARAM_INPUT_1)) {
+      inputMessage = request->getParam(PARAM_INPUT_1)->value();
+      hours = inputMessage.toInt();
+    }
+    // GET input2 value on <ESP_IP>/get?input2=<inputMessage>
+    else if (request->hasParam(PARAM_INPUT_2)) {
+      inputMessage = request->getParam(PARAM_INPUT_2)->value();
+      minutes = inputMessage.toInt();
+    }
+    // GET input3 value on <ESP_IP>/get?input3=<inputMessage>
+    else if (request->hasParam(PARAM_INPUT_3)) {
+      inputMessage = request->getParam(PARAM_INPUT_3)->value();
+      seconds = inputMessage.toInt();
+    }
+    else {
+      inputMessage = "No message sent";
+    }
+    Serial.println(inputMessage);
+    request->send(200, "text/html", "HTTP GET request sent to your ESP on input field (" 
+                                      ") with value: " + inputMessage +
+                                     "<br><a href=\"/\">Return to Home Page</a>");
+  });
+  
+
+
+
+
+
+ //---------------------------/ServerStack------------------------------------------>  
  
   server.begin();
 
@@ -149,47 +194,8 @@ void loop() {
  // Serial.println("test");
  //    Serial.println(timeClient.getHours());
  //    Serial.println(timeClient.getMinutes());
-
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html", String(), false, processor);
-  });
-
-  server.on("/time", HTTP_GET, [](AsyncWebServerRequest *request){
-    char str[16]; 
-
-    sprintf(str,"%02u:%02u:%02u ", hours, minutes, seconds); 
-    Serial.println(str);
-    String test = String(str);
-    request->send_P(200, "text/plain", test.c_str());
-  });
+//--------------------------------SERVER-------------------------------<
  
-    server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    String inputMessage;
-    // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
-    if (request->hasParam(PARAM_INPUT_1)) {
-      inputMessage = request->getParam(PARAM_INPUT_1)->value();
-      hours = inputMessage.toInt();
-    }
-    // GET input2 value on <ESP_IP>/get?input2=<inputMessage>
-    else if (request->hasParam(PARAM_INPUT_2)) {
-      inputMessage = request->getParam(PARAM_INPUT_2)->value();
-      minutes = inputMessage.toInt();
-    }
-    // GET input3 value on <ESP_IP>/get?input3=<inputMessage>
-    else if (request->hasParam(PARAM_INPUT_3)) {
-      inputMessage = request->getParam(PARAM_INPUT_3)->value();
-      seconds = inputMessage.toInt();
-    }
-    else {
-      inputMessage = "No message sent";
-    }
-    Serial.println(inputMessage);
-    request->send(200, "text/html", "HTTP GET request sent to your ESP on input field (" 
-                                      ") with value: " + inputMessage +
-                                     "<br><a href=\"/\">Return to Home Page</a>");
-  });
-  
-
   clearLeds();
 
   //Time2LED(timeClient.getHours(), timeClient.getMinutes());
