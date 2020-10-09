@@ -18,8 +18,11 @@ const char* ssid     = "WORD_CLOCK52";
 const char* password = "123456789";
 
 AsyncWebServer server(80);
-int dummyVar = 0;
-
+//--------------------------Variablen für Effecte---------------------------------
+int dummyVar = 0;     //weiss nicht mehr, wofür dei gut war?
+int myEffectsMode = 1; // (256.h) modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
+int refreshRate = 4; // upDateRate Display, mögliche Werte: 1:-> 60sek, /2:-> 30sek, /3:-> 20sek, /4:-> 15sek
+//---------------------------------------------------------------------------------
 int delayInSeconds = 0;
 unsigned long timeNow = 0UL;
 unsigned long timeLast = 0UL;
@@ -103,24 +106,21 @@ void setup(){
 //-------------------------------------END OF SETUP-------------------------->
 //---------------------------------------SET NEW TIME------------------------------------->
 boolean setNewTime1(){
-    
+    int tUpdate = 60/refreshRate;
     timeNow = micros()/1000000UL; 
     seconds = (int)(timeNow - timeLast);
-    
+    if (seconds%tUpdate) {newMinuteFlag = true;}
+   // if ((seconds/tUpdate) > refreshRate) {newMinuteFlag = true;}
      if (seconds >= 60) {
-      timeLast = timeNow;  //rückspeichern 
-      seconds = 0;
-      minutes = minutes + 1;
-      newMinuteFlag = true; //neueMinute-Update notwendig!
-  
-  if (minutes >= 60){ 
-      minutes = 0;
-      hours = hours + 1;
-  
-
-// if one hour has passed, start counting minutes from zero and add one hour to the clock
-
-  if (hours >= 24){
+        timeLast = timeNow;  //rückspeichern 
+        seconds = 0;
+        minutes = minutes + 1;
+        //newMinuteFlag = true; //neueMinute-Update notwendig!
+          if (minutes >= 60){ 
+               minutes = 0;
+               hours = hours + 1;
+              // if one hour has passed, start counting minutes from zero and add one hour to the clock
+          if (hours >= 24){
     hours = 0;
   }}}
 
@@ -149,7 +149,7 @@ return newMinuteFlag;
 }
 //---------------------------------START OF LOOP----------------------------->
 void loop() {
-
+syncEffectsMode(myEffectsMode); //sende effectsMode an 256.h 
  // timeClient.update();
   //minutes = minutes + 1;
  // Serial.println("test");
@@ -198,22 +198,22 @@ server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
   clearLeds();
   
   //Time2LED(timeClient.getHours(), timeClient.getMinutes());
-  setCurrentColor(violet);
+  setCurrentColor(demo);
   if(setNewTime1()) {
  
    //timeNow = timeNow + 5;
   // Serial.println("-------debug:-----TimeToLed --------------------------");
   
-  Time2LED(hours, minutes);
+  Time2LED(hours, minutes);  //Fkt. ist im File TimeLogic.h
   newMinuteFlag = false; //"neueMinute-Update notwendig?"  zurücksetzen
   }
     //if (!(cc % 10)) {Serial.print("got ClockClick Update:");} cc++;
   //Serial.println(cc);//timeClient.update();
    // strip.Show();
 //  server.reset();
-    seconds = seconds + delayInSeconds;
+    //seconds = seconds + delayInSeconds;
       //delay(delayInSeconds*1000);
-  }
+}
  
  //------------------------------------END OF LOOP---------------------------------------->
 
