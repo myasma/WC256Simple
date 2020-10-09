@@ -28,7 +28,7 @@ unsigned long timeNow = 0UL;
 unsigned long timeLast = 0UL;
 int seconds = 0;
 int minutes = 22;
-int hours   = 15;
+int hours   = 17;
 boolean newMinuteFlag = true; //"neueMinute-Update notwendig?"  zurücksetzen
 //debug-Vars------------------>
 int cc = 0;
@@ -76,7 +76,6 @@ void setup(){
     return;
   }
  
- 
  //---------------------------Server Stack------------------------------------------>
  
  //---------------------------/ServerStack------------------------------------------>  
@@ -96,7 +95,6 @@ void setup(){
 
   strip.Begin();
   strip.Show();
-
 }
 //-------------------------------------END OF SETUP-------------------------->
 //---------------------------------------SET NEW TIME------------------------------------->

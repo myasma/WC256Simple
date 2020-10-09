@@ -1,0 +1,4 @@
+-Display-Update in mode 0 flackert
+-DisplayRefresh in den anderen Modes asynchron
+WEBServer verweigert anmeldung (http404)
+und vieles mehr :)
