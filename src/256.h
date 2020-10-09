@@ -3,9 +3,9 @@
 using namespace std;
 unsigned long stepTime = 175UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
 unsigned long stepTimeT = (stepTime*1000);
-int effectsMode = 1;        //modeSwitch f. User-defined Einstellungne.(1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
-
-
+int effectsMode = 0;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
+String track = "g0";
+boolean vReverse = true;  //Flag zur Anzeige einer verkehrten Buchstabenreihenfolge
 const int matrix[16][16] ={
     { 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0},
     { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31},
@@ -25,11 +25,11 @@ const int matrix[16][16] ={
     {240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255}
 };
 
-#pragma region eins
-//Reihe 1
-//    { 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0},
 
-vector<int> typeWriter;    // <--Container, beinhaltet das aktuell anzuzeigende Wort,
+//---------------------------------------------effectsWorker-------------------------------------------<
+
+void syncEffectsMode(int effectsModeFromMain ) { effectsMode = effectsModeFromMain;} //syncEffect wird aus Main aufgerufen!
+vector<int> typeWriter;    // <--erstelle Container, fuer das aktuell anzuzeigende Wort,
                            // laden des Containers erfolgt in den jeweiligen u.a. Funktion.
 void hammer(int tMode) { // erzeugt ein timeDelay
     /*  unsigned long a_Time = millis();
@@ -39,19 +39,16 @@ void hammer(int tMode) { // erzeugt ein timeDelay
       delayMicroseconds(stepTimeT);
    }
 void hammerLetter() {
- 
-      //Serial.print("Letter: ");
-/* if (typeWriter.at(0) > typeWriter.at(1)) {
-for_each (typeWriter.rbegin(), typeWriter.rend(),setLed);
-       //Serial.print(letterNumber);Serial.print(":");
-                    delayMicroseconds(stepTimeT);
-                    //hammer(effectsMode);
-                    strip.Show();
-                     typeWriter.clear();
-                     yield();     //<--gewährleistet der Schleife genug Zeit,   
-            }
-              else {                   //um auslösung des WDT-Reset zu verhindern. */
-
+                    if (vReverse ) {    //Korrektur                
+                            for (auto iter = typeWriter.crbegin(); iter != typeWriter.crend(); ++iter) 
+                            {setLed(*iter);
+                            delayMicroseconds(stepTimeT);
+                            //hammer(effectsMode);
+                            strip.Show();
+                            typeWriter.clear();
+                            yield();     //<--gewährleistet der Schleife genug Zeit,   
+                             }
+                                } else {                   //um auslösung des WDT-Reset zu verhindern. 
         for (int letterNumber : typeWriter) {setLed(letterNumber);
        //Serial.print(letterNumber);Serial.print(":");
                     delayMicroseconds(stepTimeT);
@@ -63,28 +60,36 @@ for_each (typeWriter.rbegin(), typeWriter.rend(),setLed);
        //Serial.println(" done");
 //mySilbenArray = {};
 }
-
+}
 void hammerWords() {
  for (int letterNumber : typeWriter) {setLed(letterNumber);}
-delayMicroseconds(stepTimeT*3);
-//hammer(effectsMode);
+if (effectsMode > 0) {delayMicroseconds(stepTimeT*3);}  
+//hammer(effectsMode);}
 strip.Show();
 typeWriter.clear();
 yield();
 }
-
 void loadHammer() {
-        if (effectsMode == 1) {hammerLetter();}
+        // weil die "setLED" -zuweisungen nicht konsistent sind, werden sie hier gecheckt u. ggf. zur korrektur angemeldet 
+        vReverse = false;
+        if ( (typeWriter.at(1) > typeWriter.at(0)) && (bitRead(typeWriter.at(0),4) == LOW)) {
+                vReverse = true;} //korrektur noetig
         if (effectsMode == 0) {hammerWords();}
+        if (effectsMode == 1) {hammerLetter();}
+        if (effectsMode == 3) {hammerWords();}
         if (effectsMode == 2) {
-            if(typeWriter.at(0) == 15) {  //"ES IST" mit 'hammerLetter' ausgeben, alle Anderen mit 'hammerWords)
+            if(typeWriter.at(0) == 15) {  //Ausgabe von "ES IST" wird mit 'hammerLetter' ausgeben, alle Anderen mit 'hammerWords)
                 hammerLetter();} else {hammerWords();}
             }
-        }           
-                    
+        } 
+//---------------------------------------// effectsWorker ------------------------------------------------------<         
+ #pragma region eins
+//Reihe 1
+//    { 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0},                   
 void ES_IST(){
     typeWriter.clear();
     typeWriter = {15,14,12,11,10};
+    delayMicroseconds(stepTimeT*2);
     loadHammer();
    
     /*
@@ -97,7 +102,7 @@ void ES_IST(){
 
 void SIND(){
     typeWriter.clear();
-    typeWriter = {45,6,7,8};
+    typeWriter = {4,5,6,7,8};
     loadHammer();
   /*   
     setLed(5);
@@ -108,7 +113,7 @@ void SIND(){
 
 void HALB(){
  typeWriter.clear();
- typeWriter = {40,1,2,3};
+ typeWriter = {0,1,2,3};
     loadHammer();
 
   /*
@@ -119,7 +124,6 @@ void HALB(){
 }
 
 #pragma endregion
-
 
 #pragma region zwei
 
@@ -365,7 +369,7 @@ void ZWANZIG_TOP(){
 
 void DREISSIG_TOP(){
     typeWriter.clear();
-     typeWriter = {95,88,89,90,91,92,93,94};
+     typeWriter = {88,89,90,91,92,93,94,95};
     loadHammer();
     /* 
     setLed(95);
@@ -530,7 +534,7 @@ void EINE_BOTTOM(){
 
 void NEUN_BOTTOM(){
     typeWriter.clear();
-    typeWriter = {150,151,151,153};
+    typeWriter = {150,151,152,153};
     loadHammer();
     /*
     setLed(150);
@@ -670,7 +674,7 @@ void UND_BOTTOM(){
 //    {208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223},
 void ZWANZIG_BOTTOM(){
     typeWriter.clear();
-    typeWriter = {208,209,210,211,212,213,214};
+    typeWriter = {209,210,211,212,213,214,215};
     loadHammer();
     /* 
     setLed(208);
