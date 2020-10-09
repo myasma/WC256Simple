@@ -30,34 +30,29 @@ int seconds = 0;
 int minutes = 22;
 int hours   = 15;
 boolean newMinuteFlag = true; //"neueMinute-Update notwendig?"  zurücksetzen
+//debug-Vars------------------>
 int cc = 0;
-
-//Input Parameter for Webserver
+int debugTime = 1212;
+//------------------Input Parameter for Webserver-------->
 const char* PARAM_INPUT_1 = "HOUR";
 const char* PARAM_INPUT_2 = "MINUTE";
 const char* PARAM_INPUT_3 = "SECOND";
-
 const long utcOffsetInSeconds = 3600;
-
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 // Define NTP Client to get time
 
 String processor(const String& var){
   Serial.println(var);
-
    if(var == "MINUTE"){
     return String(minutes);
   } else if (var =="SECOND"){
     return String(seconds);
-    
   }
   else if (var =="HOUR"){
-    
     return String(hours);
   }
   else return "uups";
- 
 }
 
 //----------------------------------BEGIN OF SETUP---------------------------> 
@@ -73,7 +68,7 @@ void setup(){
   Serial.println(IP);
   Serial.println(WiFi.localIP());
   Serial.println("martin");
-  Serial.print("this is ");Serial.print(_FILENAME_);Serial.print(": ");Serial.print(__DATE__);Serial.print(": ");Serial.println(__TIME__);
+  Serial.print("this is ");Serial.print(__FILE__);Serial.print(": ");Serial.print(__DATE__);Serial.print(": ");Serial.println(__TIME__);
   delay(1000UL);
   
   if(!SPIFFS.begin()){
@@ -145,8 +140,20 @@ if (hours == 24 - startingHour + 2) {
 Serial.print(":");Serial.print(minutes);
 Serial.print(":");Serial.println(seconds); */
 delay(1234UL);
+/*
+//zum Debuggen wird hier die Zeit manuell eingegeben
+unsigned long t0 = millis();
+Serial.print("new hour: ");
+Serial.print("debugTime = " + debugTime);
+do {
+    if (Serial.available() > 0) {debugTime = Serial.parseInt();}
+  }while ((millis()- t0) < 1234UL);
+*/
 return newMinuteFlag;
+
 }
+//----------------------------------------------------------end of SetNewTime1----------------------------->
+;
 //---------------------------------START OF LOOP----------------------------->
 void loop() {
 syncEffectsMode(myEffectsMode); //sende effectsMode an 256.h 
