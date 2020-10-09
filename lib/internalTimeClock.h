@@ -4,8 +4,7 @@
 ,seconds;  */
 int minutes, hours;
 void setNewTime(){
-  
-    timeNow = millis() /1000; 
+      timeNow = millis() /1000; 
     seconds = (int) timeNow - timeLast;
     if (seconds == 60) {
         timeLast = timeNow;
