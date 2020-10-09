@@ -5,7 +5,7 @@
 using namespace std;
 
 void setHourOnLed(int Hour){
-    TOP_UHR();
+    //TOP_UHR();
     switch (Hour) {
     case 0:  TOP_VIER(); TOP_UND(); TOP_ZWANZIG();  break;
     case 1: TOP_EIN();  break;
@@ -26,17 +26,18 @@ void setHourOnLed(int Hour){
     case 15: TOP_FUENF();TOP_ZEHN();  break;
     case 16: TOP_SECHS(); TOP_ZEHN();  break;
     case 17: TOP_SIEB(); TOP_ZEHN(); break;
-    case 18: TOP_ACHT; TOP_ZEHN(); break;
+    case 18: TOP_ACHT(); TOP_ZEHN(); break; //
     case 19: TOP_NEUN();TOP_ZEHN();  break;
     case 20: TOP_ZWANZIG(); break;
     case 21: TOP_EIN(); TOP_UND(); TOP_ZWANZIG();  break;
-    case 22: TOP_ZWEI; TOP_UND(); TOP_ZWANZIG();  break;
-    case 23: TOP_DREI; TOP_UND(); TOP_ZWANZIG();   break;
-    case 24: TOP_VIER; TOP_UND(); TOP_ZWANZIG();  break;
+    case 22: TOP_ZWEI(); TOP_UND(); TOP_ZWANZIG();  break;
+    case 23: TOP_DREI(); TOP_UND(); TOP_ZWANZIG();   break;//
+    case 24: TOP_VIER(); TOP_UND(); TOP_ZWANZIG();  break;//
   
     default:
         break;
     }
+    TOP_UHR();
 }
 
 void setMinuteOnLed(int Minute){

@@ -43,7 +43,7 @@ unsigned int smatrix[256] ={
 //---------------------------------------------effectsWorker-------------------------------------------<
 unsigned long stepTime = 175UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
 unsigned long stepTimeT = (stepTime*1000);
-int effectsMode = 0;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
+int effectsMode = 1;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
 String track = "g0";
 boolean vReverse = true;  //Flag zur Anzeige einer verkehrten Buchstabenreihenfolge
 //------------------------------------------------------------------------------------------------------+
@@ -106,10 +106,12 @@ void loadHammer() {
 //------------------------------------//organiser---------------------------------------
 void vfill(int left, int right) {
        typeWriter.clear();
+       
        int amount = abs(left -right);
        int start = min(left,right);
+       typeWriter.resize(amount + 1);
         for (int i = 0; i<= amount; i++) {typeWriter.at(i) = (start+i);}
-        loadHammer;
+        loadHammer();
 }
 
 #pragma region eins
@@ -245,7 +247,8 @@ void TOP_SECHS(){
     setLed(53); */
 }
 
-void TOP_SIEB(58,61){
+void TOP_SIEB(){
+        vfill(58,61);
     
     /* setLed(58);
     setLed(59);
@@ -254,8 +257,7 @@ void TOP_SIEB(58,61){
 }
 
 void TOP_SIEBEN(){
-    
-    TOP_SIEB();
+        TOP_SIEB();
         vfill(62,63);
     /* setLed(62);
     setLed(63); */
@@ -311,8 +313,8 @@ void TOP_UND(){
 #pragma region sechs
 //Reihe 6
 //    { 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95},
-void zwanzig(81,87){
-   
+void zwanzig(){
+       vfill(81,87);
     /* setLed(81);
     setLed(82);
     setLed(83);
@@ -450,7 +452,7 @@ void h_ein(){
 void BOTTOM_EIN(){h_ein();}
 void eins(){
     h_ein();
-    vfill(147,147)
+    vfill(147,147);
    /*  setLed(147);
  */
 }
