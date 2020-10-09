@@ -41,6 +41,14 @@ unsigned int smatrix[256] ={
     240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255
 };
 //---------------------------------------------effectsWorker-------------------------------------------<
+/*
+mit den Funktionsaufrufen von TimeLogic.h werden die sprechenden LEDs selectiert. Funktion "vfill()" benötigt nur die
+erste und letzte LED-Nummer des anzuzeigenden Wortes, und erstellt einen Vector mit den LED-Nummern.
+In Funktion "loadHammer()" wird die Anzeigereihenfolge überprüft u. ggf. ein Flag zur Korrektur für Fkt.
+"hammerLetter()" gesetzt. Verzögerungszeit zw. Typenanschlägen ist stepTimeT.
+gesetzt.   
+
+ */
 unsigned long stepTime = 175UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
 unsigned long stepTimeT = (stepTime*1000);
 int effectsMode = 1;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
@@ -113,7 +121,6 @@ void vfill(int left, int right) {
         for (int i = 0; i<= amount; i++) {typeWriter.at(i) = (start+i);}
         loadHammer();
 }
-
 #pragma region eins
 //Reihe 1
 //    { 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0},
