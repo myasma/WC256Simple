@@ -1,9 +1,9 @@
 #include <Arduino.h>
+
 using namespace std;
 
 
-
-const int matrix[16][16] ={
+/* const int matrix[16][16] ={
     { 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0},
     { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31},
     { 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32},
@@ -39,7 +39,7 @@ unsigned int smatrix[256] ={
     208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,
     239,238,237,236,235,234,233,232,231,230,229,228,227,226,225,224,
     240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255
-};
+}; */
 //---------------------------------------------effectsWorker-------------------------------------------<
 /*
 mit den Funktionsaufrufen von TimeLogic.h werden die sprechenden LEDs selectiert. Funktion "vfill()" benötigt nur die
@@ -51,7 +51,7 @@ gesetzt.
  */
 unsigned long stepTime = 175UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
 unsigned long stepTimeT = (stepTime*1000);
-int effectsMode = 1;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
+int effectsMode = 0;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
 String track = "g0";
 boolean vReverse = true;  //Flag zur Anzeige einer verkehrten Buchstabenreihenfolge
 //------------------------------------------------------------------------------------------------------+
@@ -66,6 +66,7 @@ void hammer(int tMode) { // erzeugt ein timeDelay
       delayMicroseconds(stepTimeT);
    }
 void hammerLetter() {
+    //if (getContext() != 0) {delayMicroseconds(stepTimeT*3); textCtxt = 0;}
                     if (vReverse ) {    //Korrektur                
                             for (auto iter = typeWriter.crbegin(); iter != typeWriter.crend(); ++iter) 
                             {setLed(*iter);
@@ -101,10 +102,10 @@ void loadHammer() {
         vReverse = false;
         if ( (typeWriter.at(1) > typeWriter.at(0)) && (bitRead(typeWriter.at(0),4) == LOW)) {
                 vReverse = true;} //korrektur noetig
-        if (effectsMode == 0) {hammerWords();}
-        if (effectsMode == 1) {hammerLetter();}
-        if (effectsMode == 3) {hammerWords();}
-        if (effectsMode == 2) {
+        if (effectsMode == 0) {hammerWords();Serial.println("BURST");}
+        if (effectsMode == 1) {hammerLetter();Serial.println("LETTER");}
+        if (effectsMode == 3) {hammerWords();Serial.println("WORD");}
+        if (effectsMode == 2) {Serial.println("MIX");
             if(typeWriter.at(0) == 15) {  //Ausgabe von "ES IST" wird mit 'hammerLetter' ausgeben, alle Anderen mit 'hammerWords)
                 hammerLetter();} else {hammerWords();}
             }
@@ -112,25 +113,39 @@ void loadHammer() {
 //---------------------------------------// effectsWorker ------------------------------------------------------<         
 
 //------------------------------------//organiser---------------------------------------
-void vfill(int left, int right) {
+void vfill(int left, int right) {  //initialisieren u. laden des Vector 'typeWriter' mit de Buchstabenfolge 
        typeWriter.clear();
-       
-       int amount = abs(left -right);
+       int amount = abs(left - right);
        int start = min(left,right);
        typeWriter.resize(amount + 1);
         for (int i = 0; i<= amount; i++) {typeWriter.at(i) = (start+i);}
-        loadHammer();
+       if (effectsMode > 0 ) { delayMicroseconds(stepTimeT);} // wenn 'mode 0 (kein Effekt), darf auch kein delay drin sein!
+        loadHammer(); 
 }
 #pragma region eins
 //Reihe 1
 //    { 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0},
 
 void es_ist(){
+    clearLeds();
+    strip.Show();
+    delayMicroseconds(stepTimeT);
     typeWriter.clear();
+    
+    if (effectsMode == 3) {  // im Word-Mode muss "es ist" auf zwei Wörter zerlegt werden 
+        typeWriter = {15,14};
+        loadHammer();
+    delayMicroseconds(stepTimeT);
+    typeWriter.clear();
+    typeWriter = {12,11,10};
+     delayMicroseconds(stepTimeT*2);
+    loadHammer();
+    } else {
+    
     typeWriter = {15,14,12,11,10};
     delayMicroseconds(stepTimeT*2);
     loadHammer();
-
+    }
     /* setLed(15);
     setLed(14);
     setLed(12);
@@ -147,10 +162,7 @@ void TOP_SIND(){
     setLed(8); */
 }
 
-
-
 #pragma endregion
-
 
 #pragma region zwei
 
@@ -183,8 +195,6 @@ void viertel(){
     setLed(21);
     setLed(22); */
 }
-
-
 
 void TOP_ACHT(){
    vfill(28,31);
@@ -344,7 +354,6 @@ void dreissig(){
     setLed(93);
     setLed(94);
     setLed(95); */
-
 }
 
 void TOP_DREISSIG(){dreissig();}
@@ -393,6 +402,7 @@ void TOP_MINUTEN(){
 }
 
 void TOP_UHR(){
+        
         vfill(119,121);
     /* setLed(119);
     setLed(120);
