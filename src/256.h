@@ -129,7 +129,7 @@ void vfill(int left, int right) {  //initialisieren u. laden des Vector 'typeWri
 void es_ist(){
     clearLeds();
     strip.Show();
-    delayMicroseconds(stepTimeT);
+    if (effectsMode != 0) {delayMicroseconds(stepTimeT);}
     typeWriter.clear();
     
     if (effectsMode == 3) {  // im Word-Mode muss "es ist" auf zwei Wörter zerlegt werden 

@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <NTPClient.h>
 #include "256.h"
-
 using namespace std;
 
 void setHourOnLed(int Hour){
@@ -105,19 +104,23 @@ void setMinuteOnLed(int Minute){
      }
 }
 
-
+int textCtxt = 0; // informiert die effectRoutinen, in welchem Context der anzuzeigende Text steht
 void Time2LED(int Hour, int Minute){
 
     
-  
-       es_ist();
+        textCtxt = 1;
+        es_ist();
+        textCtxt = 2;
         setHourOnLed(Hour);
+        textCtxt = 3;
         setMinuteOnLed(Minute);
     
     
 }
 
-
+int getContext() {
+    return textCtxt;
+}
 
 
 

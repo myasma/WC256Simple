@@ -50,13 +50,10 @@ String processor(const String& var){
     
   }
   else if (var =="HOUR"){
-    
-    return String(hours);
+   return String(hours);
   }
   else return "uups";
- 
 }
-
 
 void setup()
 {
