@@ -1,3 +1,7 @@
 # WC256Simple
-# File 256.h: Effecte hinzugefuegt, umschaltung der effect-Modes mit variable effectsMode (0,1 oder 2), 
-# Crash nach 96 Iterationen, Fehler noch nicht behoben!! 
+# Effecte hinzugefuegt, umschaltung der effect-Modes mit variable effectsMode (
+#   0: Standart,1: TypeWriter,2:Hammer,3: mix aus 1,2);
+# Einstellung Display-Update - rate 60, 30,20,15 - sekündlich;
+# fadeOut zw. Display-Updates;
+fadeOutdecay
+
