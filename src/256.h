@@ -1,5 +1,5 @@
 #include <Arduino.h>
-
+#include <NeoPixelBrightnessBus.h>
 using namespace std;
 
 
@@ -55,7 +55,22 @@ int effectsMode = 0;        //modeSwitch f. User-defined Einstellungne.(0: Stand
 String track = "g0";
 boolean vReverse = true;  //Flag zur Anzeige einer verkehrten Buchstabenreihenfolge
 //------------------------------------------------------------------------------------------------------+
-void syncEffectsMode(int effectsModeFromMain ) { effectsMode = effectsModeFromMain;} //syncEffect wird aus Main aufgerufen!
+
+void fadeOut() {
+    Serial.println("dim");
+for (int dimSteps = 10; dimSteps > 0; dimSteps--) {
+                            for (int i = 0; i <= 255;i++ ) {
+                                currentColor = strip.GetPixelColor(i);
+                                currentColor.Darken(100);
+                                strip.SetPixelColor((i),currentColor);
+                                                    }
+                                strip.Show();
+                                delay(200UL);
+    
+    //strip.SetPixelColor(i,currentColor/2);
+}
+}
+ void syncEffectsMode(int effectsModeFromMain ) { effectsMode = effectsModeFromMain;} //syncEffect wird aus Main aufgerufen!
 vector<int> typeWriter;    // <--erstelle Container, fuer das aktuell anzuzeigende Wort,
                            // laden des Containers erfolgt in den jeweiligen u.a. Funktion.
 void hammer(int tMode) { // erzeugt ein timeDelay
@@ -91,7 +106,7 @@ void hammerLetter() {
 }
 void hammerWords() {
  for (int letterNumber : typeWriter) {setLed(letterNumber);}
-if (effectsMode > 0) {delayMicroseconds(stepTimeT*3);}  
+if (effectsMode > 0) {delayMicroseconds((stepTimeT*130) /100);}  
 //hammer(effectsMode);}
 strip.Show();
 typeWriter.clear();
@@ -102,10 +117,10 @@ void loadHammer() {
         vReverse = false;
         if ( (typeWriter.at(1) > typeWriter.at(0)) && (bitRead(typeWriter.at(0),4) == LOW)) {
                 vReverse = true;} //korrektur noetig
-        if (effectsMode == 0) {hammerWords();Serial.println("BURST");}
-        if (effectsMode == 1) {hammerLetter();Serial.println("LETTER");}
-        if (effectsMode == 3) {hammerWords();Serial.println("WORD");}
-        if (effectsMode == 2) {Serial.println("MIX");
+        if (effectsMode == 0) {hammerWords();}//Serial.println("BURST");}
+        if (effectsMode == 1) {hammerLetter();}//Serial.println("LETTER");}
+        if (effectsMode == 2) {hammerWords();}//Serial.println("WORD");}
+        if (effectsMode == 3) {Serial.println("MIX");
             if(typeWriter.at(0) == 15) {  //Ausgabe von "ES IST" wird mit 'hammerLetter' ausgeben, alle Anderen mit 'hammerWords)
                 hammerLetter();} else {hammerWords();}
             }
@@ -132,13 +147,13 @@ void es_ist(){
     if (effectsMode != 0) {delayMicroseconds(stepTimeT);}
     typeWriter.clear();
     
-    if (effectsMode == 3) {  // im Word-Mode muss "es ist" auf zwei Wörter zerlegt werden 
+    if (effectsMode == 2) {  // im Word-Mode muss "es ist" auf zwei Wörter zerlegt werden 
         typeWriter = {15,14};
         loadHammer();
-    delayMicroseconds(stepTimeT);
+    delayMicroseconds((stepTimeT * 50) / 100);
     typeWriter.clear();
     typeWriter = {12,11,10};
-     delayMicroseconds(stepTimeT*2);
+     delayMicroseconds(stepTimeT);
     loadHammer();
     } else {
     
