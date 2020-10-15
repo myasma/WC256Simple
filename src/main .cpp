@@ -29,9 +29,9 @@ int tUpDateStep1 = 4; // upDateRate Display, mögliche Werte: 1:-> 60sek, /2:-> 
 int delayInSeconds = 0;
 unsigned long timeNow = 0UL;
 unsigned long timeLast = 0UL;
-int seconds = 0;
-int minutes = 9;
-int hours   = 17;
+int hours   = 10;
+int minutes = 59;
+int seconds = 30;
 int tUpdate = 0;
 int secondsupd = 0;
 int refreshRate;
@@ -79,7 +79,7 @@ void setup(){
   // das FS ist mehr als cryptisch :(
   if(!LittleFS.begin()){
     Serial.println("An Error has occurred while mounting LittleFS");return;} else {
-     f1 = LittleFS.open("index.html", "r");
+     f1 = LittleFS.open("index.htm", "r");
       if (!f1){Serial.print("unable to opne index.htm");}
     }
      Serial.println();

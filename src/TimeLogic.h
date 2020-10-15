@@ -41,8 +41,9 @@ void setHourOnLed(int Hour){
 
 void setMinuteOnLed(int Minute){
  switch(Minute){
-      case 0: BOTTOM_UHR(); break;
+      case 0: break;// case 0: BOTTOM_UHR(); break;  // deakt. wg. Doppelanzeige UHR TOP u. UHR BOTTOM  
       case 1: BOTTOM_EINS(); break;
+      //case 1: BOTTOM_EINE(); break;
       case 2: BOTTOM_ZWEI(); break;
       case 3: BOTTOM_DREI(); break;
       case 4: BOTTOM_VIER(); break;

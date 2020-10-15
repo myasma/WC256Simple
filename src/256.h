@@ -61,9 +61,9 @@ void fadeOut() {
 for (int dimSteps = 10; dimSteps > 0; dimSteps--) {
                             for (int i = 0; i <= 255;i++ ) {
                                 currentColor = strip.GetPixelColor(i);
-                                currentColor.Darken(100);
+                                currentColor.Darken(20);//18
                                 strip.SetPixelColor((i),currentColor);
-                                                    }
+                                                            }      
                                 strip.Show();
                                 delay(200UL);
     
@@ -264,7 +264,7 @@ void TOP_NEUN(){
 
 
 void TOP_EIN(){
-        vfill(50,52);
+        vfill(41,39);
     /* setLed(50);
     setLed(51);
     setLed(63); */
@@ -484,7 +484,7 @@ void h_ein(){
 void BOTTOM_EIN(){h_ein();}
 void eins(){
     h_ein();
-    vfill(147,147);
+    vfill(144,147);
    /*  setLed(147);
  */
 }
@@ -605,7 +605,7 @@ void BOTTOM_ZEHN(){h_zehn();}
 
 
 void h_acht(){
-       vfill(198,201);
+       vfill(185,182);
     /* setLed(198);
     setLed(199);
     setLed(200);
