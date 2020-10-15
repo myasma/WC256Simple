@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-
+<!-- 
+  Rui Santos
+  Complete project details at https://RandomNerdTutorials.com  
+-->
 <html>
 <head>
   <title>Word CLock</title>
 
 </head>
 <body>
-  <h1>Word CLock COnfig</h1>
+  <h1>Word CLock Config</h1>
   <button onclick="getClientTime()" id="time">
     %HOUR%:%MINUTE%:%SECOND%
   </button>
@@ -42,22 +45,3 @@ fetch("/get?SECOND="+seconds, requestOptions);
 
  
 
-      document.getElementById("time").innerHTML = hour+ ":" + minute + ":" + seconds;
-    }
-    setInterval(function ( ) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          document.getElementById("time").innerHTML = this.responseText;
-          }
-        };
-      xhttp.open("GET", "/time", true);
-      xhttp.send();
-      }, 5000 ) ;
-  </script>
-  
-</body>
-
-
-
-</html>
