@@ -260,7 +260,7 @@ boolean setNewTime2(){
     hours = 0;
   }
 
-    if (seconds == 0) {displayUpdateFlag = true; }
+    if (seconds == 0) {displayUpdateFlag = true; effectsMode = 1;} else {effectsMode = 2;}
      switch (tUpDateStep1) { //60 /30 /20 /15
         case 2: if (seconds == 30) {displayUpdateFlag = true; } 
         break;
@@ -269,8 +269,6 @@ boolean setNewTime2(){
         case 4: if ((seconds == 15) || (seconds == 30) || (seconds == 45))  {displayUpdateFlag = true; } 
         break; 
      }
-
-
 
 if (secondsPrevious != seconds) {
 Serial.print("current HHMMss "); Serial.print(hours); Serial.print(":");Serial.print(minutes);Serial.print(":");Serial.println(seconds); 

@@ -553,10 +553,11 @@ void BOTTOM_SIEB(){
     setLed(165); */
 }
 void h_sieben(){
+       BOTTOM_SIEB(); 
        vfill(160,161);
     /* setLed(160);
     setLed(161); */
-    BOTTOM_SIEB();
+   
 }
 
 void BOTTOM_SIEBEN(){h_sieben();}
