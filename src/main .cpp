@@ -22,7 +22,8 @@ const char* password = "123456789";
 AsyncWebServer server(80);
 //--------------------------Variablen für Effecte---------------------------------
 int dummyVar = 0;     //weiss nicht mehr, wofür dei gut war?
-int myEffectsMode = 2; // (256.h) modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel / 3: MixedMode)
+int myEffectsMode = 0; // (256.h) modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel / 3: MixedMode)
+int effModePrev = -1; //Hilfsvariable;
 int tUpDateStep1 = 4; // upDateRate Display, mögliche Werte: 1:-> 60sek, /2:-> 30sek, /3:-> 20sek, /4:-> 15sek
     //!!!----------im gui muss eine verknüpfung vorgesehen werde, damit im Mode 0 die tUpDateStep1 nur den Wert 1 annehmen kann!!
 //---------------------------------------------------------------------------------
@@ -30,7 +31,7 @@ int delayInSeconds = 0;
 unsigned long timeNow = 0UL;
 unsigned long timeLast = 0UL;
 int hours   = 10;
-int minutes = 59;
+int minutes = 58;
 int seconds = 30;
 int tUpdate = 0;
 int secondsupd = 0;
@@ -259,8 +260,9 @@ boolean setNewTime2(){
           if (hours >= 24){
     hours = 0;
   }
-
-    if (seconds == 0) {displayUpdateFlag = true; effectsMode = 1;} else {effectsMode = 2;}
+    //if (seconds == 0) {displayUpdateFlag = true; effectsMode = 1;} else {effectsMode = 2;}
+    if (seconds == 0) {displayUpdateFlag = true; effectsMode = 1;} else {effectsMode = 4;}
+    //effectsMode = 4; //<-------------------TEST VON MODE 4---AKTIV!!!---------------!!!!!!
      switch (tUpDateStep1) { //60 /30 /20 /15
         case 2: if (seconds == 30) {displayUpdateFlag = true; } 
         break;
@@ -271,7 +273,7 @@ boolean setNewTime2(){
      }
 
 if (secondsPrevious != seconds) {
-Serial.print("current HHMMss "); Serial.print(hours); Serial.print(":");Serial.print(minutes);Serial.print(":");Serial.println(seconds); 
+//Serial.print("current HHMMss "); Serial.print(hours); Serial.print(":");Serial.print(minutes);Serial.print(":");Serial.println(seconds); 
  
  secondsPrevious  = seconds;
 }
@@ -301,7 +303,10 @@ return displayUpdateFlag;
 
 //---------------------------------START OF LOOP----------------------------->
 void loop() {
+if (effModePrev != myEffectsMode) {
 syncEffectsMode(myEffectsMode); //sende effectsMode an 256.h 
+ effModePrev = myEffectsMode;
+}
  // timeClient.update();
   //minutes = minutes + 1;
  // Serial.println("test");

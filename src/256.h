@@ -57,20 +57,29 @@ boolean vReverse = true;  //Flag zur Anzeige einer verkehrten Buchstabenreihenfo
 //------------------------------------------------------------------------------------------------------+
 
 void fadeOut() {
-    Serial.println("dim");
-for (int dimSteps = 10; dimSteps > 0; dimSteps--) {
+    
+    //Serial.println("dim");
+for (int dimSteps = 30; dimSteps > 0; dimSteps--) {
                             for (int i = 0; i <= 255;i++ ) {
                                 currentColor = strip.GetPixelColor(i);
-                                currentColor.Darken(20);//18
+                                currentColor.G =  (uint8_t) (((double) currentColor.G) / 1.1);
+                                currentColor.R =  (uint8_t) (((double) currentColor.R) / 1.1);
+                                currentColor.B =  (uint8_t) (((double) currentColor.B) / 1.1);
+                                  //currentColor.Darken(20);//18
                                 strip.SetPixelColor((i),currentColor);
+                            }     
                                                             }      
+                      
                                 strip.Show();
-                                delay(200UL);
-    
+                                delay(100UL);
+                            
     //strip.SetPixelColor(i,currentColor/2);
 }
-}
- void syncEffectsMode(int effectsModeFromMain ) { effectsMode = effectsModeFromMain;} //syncEffect wird aus Main aufgerufen!
+//------------------------------------------effectsMode---------------------------------------------------------------------------------
+ void syncEffectsMode(int effectsModeFromMain) { effectsMode = effectsModeFromMain;
+ Serial.print("256h: crnt effMode: ");Serial.println(effectsMode);} //syncEffect wird aus Main aufgerufen!
+//----------------------------------------------------------------------------------------------------------------------------------------
+
 vector<int> typeWriter;    // <--erstelle Container, fuer das aktuell anzuzeigende Wort,
                            // laden des Containers erfolgt in den jeweiligen u.a. Funktion.
 void hammer(int tMode) { // erzeugt ein timeDelay
@@ -80,6 +89,7 @@ void hammer(int tMode) { // erzeugt ein timeDelay
                 a_Time = millis(); */
       delayMicroseconds(stepTimeT);
    }
+//------------------------------------------------------hammerLetters-----------------------------------------------------------------------   
 void hammerLetter() {
     //if (getContext() != 0) {delayMicroseconds(stepTimeT*3); textCtxt = 0;}
                     if (vReverse ) {    //Korrektur                
@@ -104,6 +114,7 @@ void hammerLetter() {
 //mySilbenArray = {};
 }
 }
+//------------------------------------------------------hammerWords----------------------------------------------------------------------
 void hammerWords() {
  for (int letterNumber : typeWriter) {setLed(letterNumber);}
 if (effectsMode > 0) {delayMicroseconds((stepTimeT*130) /100);}  
@@ -112,18 +123,69 @@ strip.Show();
 typeWriter.clear();
 yield();
 }
+//-----------------------------------------------------shiftWords------------------------------------------------------------------------
+void shiftWords() {
+Serial.println("-------------------------------------------------------------");
+boolean rowIsEven = true; 
+int yesNo = 0;
+//identifiziere die Zeilennummer in der das anzuzeigende Wort steht
+        if (bitRead(typeWriter.at(1),4) == LOW) {rowIsEven = true;yesNo = 0;} else {rowIsEven = false;yesNo = 1;}
+        uint8_t rn = 0; uint8_t rowNumber= 0;
+        rn = typeWriter.at(1);
+        rowNumber = rn & 0xF0;
+        rowNumber = (rowNumber >> 4);
+        Serial.print("row: ");Serial.print(rowNumber);
+//identifiziere die PixelNr. des äusserst rechten Pixels der entsprechenden Zeile 
+        int rml = 0;   //rml = indexOfRightMostLED je Zeile
+        if (rowIsEven) {rml = ((rowNumber *16));}  //0/2/4/6....
+        else {rml = (((rowNumber +1) *16) -1 );}                    //1/3/5/7....               //0/31/32/63/64
+        Serial.print(" rml: ");Serial.print(rml);Serial.print(" isEven: ");Serial.println(yesNo);
+        //setLed(rml);
+ //Anzahl der Pixels im betreffenden Wort 
+        int pixLen = typeWriter.size();
+ //schiebe die Pixels von links nach rechts rein, bis Wortlänge erreicht
+int i = rml;
+    
+    int firstLetter = 0;
+Serial.print(" /tw-0:");Serial.print(typeWriter.at(0));
+if (vReverse) {Serial.println(" /reversed!");} else {Serial.println("/nonReverse");}
+    if (rowIsEven) {  
+        i = rml;
+    if (vReverse) {firstLetter = typeWriter.at(0);} else {firstLetter = typeWriter.at(pixLen-1);} 
+    while (i != firstLetter ) {
+                            setLed(i+pixLen);
+                            blackLed(i);i++;
+                            strip.Show();
+                            delay(100); }
+                               } else {
+                            i = rml;
+                            while (i != typeWriter.at(0)) {
+                            i--;
+                            if ((i + pixLen) <= rml) {blackLed(i+pixLen);}
+                            setLed(i);
+                            strip.Show();
+                            delay(100); 
+                            } 
+                               }                           
+    delay(200);
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 void loadHammer() {
+        Serial.print("256:ldHammer effMode =  "); Serial.println(effectsMode); 
+        //shiftWords();  //nur zum debuggen da drin!
         // weil die "setLED" -zuweisungen nicht konsistent sind, werden sie hier gecheckt u. ggf. zur korrektur angemeldet 
         vReverse = false;
         if ( (typeWriter.at(1) > typeWriter.at(0)) && (bitRead(typeWriter.at(0),4) == LOW)) {
                 vReverse = true;} //korrektur noetig
+       
         if (effectsMode == 0) {hammerWords();}//Serial.println("BURST");}
         if (effectsMode == 1) {hammerLetter();}//Serial.println("LETTER");}
         if (effectsMode == 2) {hammerWords();}//Serial.println("WORD");}
         if (effectsMode == 3) {Serial.println("MIX");
-            if(typeWriter.at(0) == 15) {  //Ausgabe von "ES IST" wird mit 'hammerLetter' ausgeben, alle Anderen mit 'hammerWords)
+                    if(typeWriter.at(0) == 15) {  //Ausgabe von "ES IST" wird mit 'hammerLetter' ausgeben, alle Anderen mit 'hammerWords)
                 hammerLetter();} else {hammerWords();}
-            }
+                        }
+        if (effectsMode == 4) {shiftWords();}
         } 
 //---------------------------------------// effectsWorker ------------------------------------------------------<         
 
@@ -137,6 +199,7 @@ void vfill(int left, int right) {  //initialisieren u. laden des Vector 'typeWri
        if (effectsMode > 0 ) { delayMicroseconds(stepTimeT);} // wenn 'mode 0 (kein Effekt), darf auch kein delay drin sein!
         loadHammer(); 
 }
+//=========================================================================================================================
 #pragma region eins
 //Reihe 1
 //    { 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0},
@@ -147,20 +210,62 @@ void es_ist(){
     if (effectsMode != 0) {delayMicroseconds(stepTimeT);}
     typeWriter.clear();
     
-    if (effectsMode == 2) {  // im Word-Mode muss "es ist" auf zwei Wörter zerlegt werden 
-        typeWriter = {15,14};
-        loadHammer();
-    delayMicroseconds((stepTimeT * 50) / 100);
-    typeWriter.clear();
-    typeWriter = {12,11,10};
-     delayMicroseconds(stepTimeT);
-    loadHammer();
-    } else {
+    switch (effectsMode) {
+case 4: {
+                typeWriter = {15,14};
+                loadHammer();
+                delayMicroseconds(stepTimeT*2);
+                typeWriter.clear();
+                typeWriter = {12,11,10};
+                delayMicroseconds(stepTimeT);
+                loadHammer();
+                break;
+}
+case 2: {
+                typeWriter = {15,14};
+                loadHammer();
+                delayMicroseconds((stepTimeT * 50) / 100);
+                typeWriter.clear();
+                typeWriter = {12,11,10};
+                delayMicroseconds(stepTimeT);
+                loadHammer();
+                break;
+}
+default: {
+                typeWriter = {15,14,12,11,10};
+                delayMicroseconds(stepTimeT*2);
+                loadHammer();
+                break;
+}
+    } 
     
-    typeWriter = {15,14,12,11,10};
-    delayMicroseconds(stepTimeT*2);
-    loadHammer();
-    }
+    
+    
+    //-------------------------------------------xcxcxc
+   /*  if (effectsMode == 4) {
+                typeWriter = {15,14};
+                loadHammer();
+                delayMicroseconds(stepTimeT*2);
+                typeWriter.clear();
+                typeWriter = {12,11,10};
+                delayMicroseconds(stepTimeT);
+                loadHammer();
+                        }
+    if (effectsMode == 2) {  // im Word-Mode muss "es ist" auf zwei Wörter zerlegt werden 
+                typeWriter = {15,14};
+                loadHammer();
+                delayMicroseconds((stepTimeT * 50) / 100);
+                typeWriter.clear();
+                typeWriter = {12,11,10};
+                delayMicroseconds(stepTimeT);
+                loadHammer();
+            } else {
+                typeWriter = {15,14,12,11,10};
+                delayMicroseconds(stepTimeT*2);
+                loadHammer();
+                             } */
+
+    //-------------------------------------------------xcxcxc
     /* setLed(15);
     setLed(14);
     setLed(12);

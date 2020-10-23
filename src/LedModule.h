@@ -9,7 +9,7 @@ NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, DotDataPin);
 static RgbColor Red     {  20,0,0};
 static RgbColor White      = RgbColor(100,100,100);
 static RgbColor Black      = RgbColor(0,0,0);
-static RgbColor demo        =RgbColor(255,5,200);
+static RgbColor demo        =RgbColor(25,1,20);
 RgbColor currentColor;
 
 void setCurrentColor(RgbColor color){currentColor = color;}
@@ -23,4 +23,7 @@ void clearLeds(){
 
 void setLed(int pos){
     strip.SetPixelColor(pos, currentColor);
+}
+void blackLed(int pos) {
+    strip.SetPixelColor(pos,Black);
 }
