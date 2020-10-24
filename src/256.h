@@ -145,29 +145,51 @@ int yesNo = 0;
         int pixLen = typeWriter.size();
  //schiebe die Pixels von links nach rechts rein, bis Wortlänge erreicht
 int i = rml;
-    
+    int stopLetter = 0;
+    int lastLetter =0;
     int firstLetter = 0;
 Serial.print(" /tw-0:");Serial.print(typeWriter.at(0));
-if (vReverse) {Serial.println(" /reversed!");} else {Serial.println("/nonReverse");}
+if (vReverse) {Serial.println(" /reversed!  ");} else {Serial.print("/nonReverse  ");}
+  // firstLetter = typeWriter.at(0);
+   //if (vReverse) {firstLetter = typeWriter.at(0);} else {firstLetter = typeWriter.at(pixLen -1);} 
+   if(typeWriter.at(0) > typeWriter.at(pixLen-1)) {firstLetter = typeWriter.at(pixLen-1);lastLetter = typeWriter.at(0);}
+    else {firstLetter = typeWriter.at(0);lastLetter = typeWriter.at(pixLen-1);} 
     if (rowIsEven) {  
         i = rml;
-    if (vReverse) {firstLetter = typeWriter.at(0);} else {firstLetter = typeWriter.at(pixLen-1);} 
-    while (i != firstLetter ) {
-                            setLed(i+pixLen);
-                            blackLed(i);i++;
+    Serial.print("firstLetter: ");Serial.println(firstLetter);
+    //if (vReverse) {firstLetter = typeWriter.at(pixLen-1);} else {firstLetter = typeWriter.at(0);} 
+    if (lastLetter > firstLetter) {stopLetter = lastLetter;} else {stopLetter = firstLetter;}                           
+                            stopLetter = stopLetter + 1;
+                            do {setLed(i);                            
+                            
+                            if ((i + pixLen - rml) >= 0) {
+                                if ((i-pixLen) >= rml) {blackLed(i-pixLen);}
+                                }
+                            //blackLed(i-pixLen);
+                            i++;
                             strip.Show();
-                            delay(100); }
-                               } else {
+                            Serial.print("-");
+                            delay(50); 
+                               }  while (i != stopLetter); }
+                                else {
                             i = rml;
-                            while (i != typeWriter.at(0)) {
-                            i--;
-                            if ((i + pixLen) <= rml) {blackLed(i+pixLen);}
+                            do {
                             setLed(i);
+
+                            //if ((i + pixLen) >= rml) {blackLed(i+pixLen);}
+                            blackLed(i + pixLen);
+                            //if ((i - pixLen) >= rml) {blackLed(i-pixLen);}               
+                            //if ((i) <= rml) {blackLed(i+pixLen);}
+                            
+                            
+                            //if ((i + pixLen) <= rml) {blackLed(i+pixLen);                            }
+                            i--;
+                            Serial.print(".");
                             strip.Show();
-                            delay(100); 
-                            } 
+                            delay(50); 
+                            } while ((i+1) != typeWriter.at(0));
                                }                           
-    delay(200);
+    delay(120);
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
 void loadHammer() {
