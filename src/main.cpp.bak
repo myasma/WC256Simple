@@ -255,7 +255,7 @@ server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
 //__________________________________________________________________________________________
 
 //----------------------------------------------------------end of SetNewTime1-----------
-//------------------>
+------------------>
 boolean setNewTime2(){
     static int secondsPrevious = 0; 
     //refreshRate = sekündliche tUpDateStep1, wurde errechnet in *SetUp' aus User Preferences
@@ -369,5 +369,3 @@ syncEffectsMode(myEffectsMode); //sende effectsMode an 256.h
  
  //------------------------------------END OF LOOP---------------------------------------->
 
-
-  
