@@ -22,7 +22,7 @@ const char* password = "123456789";
 AsyncWebServer server(80);
 //--------------------------Variablen für Effecte---------------------------------
 int dummyVar = 0;     //weiss nicht mehr, wofür dei gut war?
-int myEffectsMode = 0; // (256.h) modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel / 3: MixedMode)
+int myEffectsMode = 0; // (256.h) modeSwitch f. User-defined Einstellungne: //  0: Standart / 1: Schreibmaschine / 2: Stempel / 3: MixedMode / 4: SlideIn
 int effModePrev = -1; //Hilfsvariable;
 int tUpDateStep1 = 4; // upDateRate Display, mögliche Werte: 1:-> 60sek, /2:-> 30sek, /3:-> 20sek, /4:-> 15sek
     //!!!----------im gui muss eine verknüpfung vorgesehen werde, damit im Mode 0 die tUpDateStep1 nur den Wert 1 annehmen kann!!
@@ -31,7 +31,7 @@ int delayInSeconds = 0;
 unsigned long timeNow = 0UL;
 unsigned long timeLast = 0UL;
 int hours   = 10;
-int minutes = 58;
+int minutes = 36;
 int seconds = 30;
 int tUpdate = 0;
 int secondsupd = 0;
@@ -230,7 +230,32 @@ server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
 // return displayUpdateFlag;
 
 // }
-// //----------------------------------------------------------end of SetNewTime1----------------------------->
+//---------------------MODE--SCHALTUNG NOCH NICHT IMPLEMENTIERT-------------------------------->!
+//__________________________________________________________________________________________
+//------------------------------effectsMode-table----------------------------
+//_______________________-DY--REFRESH_RATE__________________________________________________
+//                         15sec   20sec  30sec   60sec
+//     int tUpDateStep  =    4       3       2       1
+//__________________________________________________________________________________________
+//
+//________________________WORTEFFEKTE_______________________________________________________
+//
+//                        | Standart(noEffect) | Schreibmaschine | WortStempel | SlideIn | 
+//  int myEffectsMode =             0                   1                 2           4
+//
+//________________________WORTEFFEKTE-MIX___________________________________________________  
+//                
+//                        | Schreibm/Stempel| SlideIn / Stempel| Schreibm/SlideIn             
+//  int myEffectsMode =             3               5                   7
+// _________________________________________________________________________________________
+// 
+//_____________________________FadeOut______________________________________________________
+//
+//    boolean fadeOut =         1/0         (mit allen anderen Modes kombinierbar)
+//__________________________________________________________________________________________
+
+//----------------------------------------------------------end of SetNewTime1-----------
+------------------>
 boolean setNewTime2(){
     static int secondsPrevious = 0; 
     //refreshRate = sekündliche tUpDateStep1, wurde errechnet in *SetUp' aus User Preferences
@@ -261,6 +286,8 @@ boolean setNewTime2(){
     hours = 0;
   }
     //if (seconds == 0) {displayUpdateFlag = true; effectsMode = 1;} else {effectsMode = 2;}
+    
+    
     if (seconds == 0) {displayUpdateFlag = true; effectsMode = 1;} else {effectsMode = 4;}
     //effectsMode = 4; //<-------------------TEST VON MODE 4---AKTIV!!!---------------!!!!!!
      switch (tUpDateStep1) { //60 /30 /20 /15

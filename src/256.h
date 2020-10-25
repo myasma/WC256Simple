@@ -51,31 +51,27 @@ gesetzt.
  */
 unsigned long stepTime = 175UL; // Verzögerungszeit zwischen den einzelnen Buchstaben 
 unsigned long stepTimeT = (stepTime*1000);
-int effectsMode = 0;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel 7 3: MixedMode)
+int effectsMode = 0;        //modeSwitch f. User-defined Einstellungne.(0: Standart / 1: Schreibmaschine / 2: Stempel / 3: MixedMode)
 String track = "g0";
 boolean vReverse = true;  //Flag zur Anzeige einer verkehrten Buchstabenreihenfolge
 //------------------------------------------------------------------------------------------------------+
 
 void fadeOut() {
     
-    //Serial.println("dim");
-for (int dimSteps = 30; dimSteps > 0; dimSteps--) {
+    Serial.println("dim");
+for (int dimSteps = 40; dimSteps > 0; dimSteps--) {
                             for (int i = 0; i <= 255;i++ ) {
                                 currentColor = strip.GetPixelColor(i);
                                 currentColor.G =  (uint8_t) (((double) currentColor.G) / 1.1);
                                 currentColor.R =  (uint8_t) (((double) currentColor.R) / 1.1);
                                 currentColor.B =  (uint8_t) (((double) currentColor.B) / 1.1);
-                                  //currentColor.Darken(20);//18
-                                strip.SetPixelColor((i),currentColor);
-                            }     
-                                                            }      
-                      
-                                strip.Show();
-                                delay(100UL);
-                            
-    //strip.SetPixelColor(i,currentColor/2);
+                                strip.SetPixelColor((i),currentColor);     
+                            }
+                            strip.Show();
+                                delay(50UL);
 }
-//------------------------------------------effectsMode---------------------------------------------------------------------------------
+}
+    //------------------------------------------effectsMode---------------------------------------------------------------------------------
  void syncEffectsMode(int effectsModeFromMain) { effectsMode = effectsModeFromMain;
  Serial.print("256h: crnt effMode: ");Serial.println(effectsMode);} //syncEffect wird aus Main aufgerufen!
 //----------------------------------------------------------------------------------------------------------------------------------------
